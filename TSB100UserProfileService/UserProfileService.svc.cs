@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
+using System.Diagnostics;
 using System.Linq;
 using Newtonsoft.Json;
 using Serilog;
 using TSB100UserProfileService.DataTransferObjects;
 using TSB100UserProfileService.Mapping;
-using TSB100UserProfileService.ServiceAdapters;
 
 namespace TSB100UserProfileService
 {
@@ -23,13 +23,17 @@ namespace TSB100UserProfileService
         {
             db = new UserProfileEntities();
             _mapper = new UserMapper();
-            var loginAdapter = new LoginAdapter();
-            _validator = new UserValidator(loginAdapter);
+            _validator = new UserValidator();
         }
 
-        public User CreateUser(NewUser newUserFromWebPage)
+        //----------------------------------------------------------------------------------------
+        // Create & Update
+        //----------------------------------------------------------------------------------------
+        public User CreateUser(NewUser newUserFromWeb)
         {
-            if (!_validator.ValidateNewUser(newUserFromWebPage))
+            Log.Information($"In USerProfileService.CreateUser(): Request recieved with NewUser {JsonConvert.SerializeObject(newUserFromWeb)}");
+
+            if (!_validator.ValidateNewUser(newUserFromWeb))
             {
                 return null;
             }
@@ -40,11 +44,11 @@ namespace TSB100UserProfileService
             {
                 var newUser = new LoginServiceRef.NewUser
                 {
-                    Email = newUserFromWebPage.Email,
-                    Firstname = newUserFromWebPage.FirstName,
-                    Surname = newUserFromWebPage.Surname,
-                    Password = newUserFromWebPage.Password,
-                    Username = newUserFromWebPage.Username
+                    Email = newUserFromWeb.Email,
+                    Firstname = newUserFromWeb.FirstName,
+                    Surname = newUserFromWeb.Surname,
+                    Password = newUserFromWeb.Password,
+                    Username = newUserFromWeb.Username
                 };
 
                 var returnUser = loginService.CreateUser(newUser);
@@ -63,28 +67,28 @@ namespace TSB100UserProfileService
 
             using (db)
             {
-                var dbUser = new UserDb();
-                db.UserDb.Add(dbUser);
+                var userDb = new UserDb();
+                db.UserDb.Add(userDb);
 
-                dbUser.UserId = userId;
-                _mapper.MapNewUserToModel(newUserFromWebPage, dbUser);
+                _mapper.MapNewUserToModel(newUserFromWeb, userDb);
+                userDb.UserId = userId;
 
                 if (!UpdateDatabase())
                 {
                     // Logging that something went wrong when trying to save the new user in the other service
-                    Log.Warning($"An attempt to create a profile with the following values failed: {JsonConvert.SerializeObject(newUserFromWebPage)}");
-
+                    Log.Warning($"An attempt to create a profile with the following values failed: {JsonConvert.SerializeObject(newUserFromWeb)}");
                     return null;
                 }
 
                 // Return a User object so that one may add more profile data
-                var user = _mapper.MapToWebService(dbUser);
+                var user = _mapper.MapToWebService(userDb);
                 return user;
             }
         }
 
         public bool UpdateUser(User user)
         {
+            Log.Information($"In USerProfileService.UpdateUser(): Request recieved with User {JsonConvert.SerializeObject(user)}");
             // TODO: Login Service does not have an UpdateUser() function - cannot pass parameters (password, email, username, first and lastname) to that service, so that they are updated there
             // TODO: validate like with NewUser (but with the User class)
 
@@ -113,35 +117,117 @@ namespace TSB100UserProfileService
             }
         }
 
-        public User GetUserByUserName(string username)
+        //----------------------------------------------------------------------------------------
+        // Delete
+        //----------------------------------------------------------------------------------------
+        /// <summary>
+        /// Deletes a userProfile from database (but not from the login service).
+        /// </summary>
+        public bool DeleteUserProfile(int userId)
         {
+            Log.Information($"In USerProfileService.DeleteUserProfile(): Request recieved with userId {userId}");
             using (db)
             {
-                var dbUser = (from u in db.UserDb
-                              where u.Username == username
-                              select u).FirstOrDefault();
+                // Linq expression using expression:
+                //var dbUser = (from u in db.UserDb
+                //              where u.UserId == userId
+                //              select u).FirstOrDefault();
 
-                // TODO: Create logging (if null)
-                return _mapper.MapToWebService(dbUser);
+                // Linq expression using fluent code:
+                var dbUser = db.UserDb
+                    .Where(u => u.UserId == userId)
+                    .FirstOrDefault();
+
+                if (dbUser == null)
+                {
+                    Log.Warning($"In USerProfileService.DeleteUserProfile(): Unable to delete userProfile with userId {userId}. UserId not found in database");
+                    return false;
+                }
+                db.Entry(dbUser).State = EntityState.Deleted;
+
+                // Saves the changes that have been made, and returns true if succeeded, and false if not
+                var profileDeleted = UpdateDatabase();
+                if (!profileDeleted)
+                {
+                    Log.Warning($"In USerProfileService.DeleteUserProfile(): Unable to delete userProfile with userId {userId}. USerProfileService.UpdateDatabase returned false");
+                }
+                return profileDeleted;
             }
         }
 
-        public User GetUserByUserId(int userId)
+
+        /// <summary>
+        /// Deletes a userProfile from database AND from the login service.
+        /// </summary>
+        public bool DeleteUser(int userId)
         {
+            Log.Information($"In USerProfileService.DeleteUser(): Request recieved with userId {userId}");
+
+            // Delete user from loginService
+            var loginDeleted = false;
+            using (var loginService = new LoginServiceRef.LoginServiceClient())
+            {
+                if (!loginService.UserIdExist(userId))
+                {
+                    Log.Warning($"In USerProfileService.DeleteUser(): Unable to delete user with userId {userId}. UserId not found in loginService");
+                }
+                else
+                {
+                    loginDeleted = loginService.DeleteUser(userId);
+                    if (!loginDeleted)
+                    {
+                        Log.Warning($"In USerProfileService.DeleteUser(): Unable to delete user with userId {userId}. loginService.DeleteUser(userId) returned false");
+                    }
+                }
+            }
+            // Delete userProfile from database
+            var profileDeleted = DeleteUserProfile(userId);
+
+            return loginDeleted && profileDeleted;
+        }
+
+        //----------------------------------------------------------------------------------------
+        // Get
+        //----------------------------------------------------------------------------------------
+        public bool UserIdExistsInProfile(int userId)
+        {
+            Log.Information($"In USerProfileService.UserIdExistsInProfile(): Request recieved with userId {userId}");
             using (db)
             {
                 var dbUser = (from u in db.UserDb
                               where u.UserId == userId
                               select u).FirstOrDefault();
+                return (dbUser != null);
+            }
+        }
 
-                // TODO: Create logging (if null)
+        public bool EmailExistsInProfile(string email)
+        {
+            Log.Information($"In USerProfileService.EmailExistsInProfile(): Request recieved with email {email}");
+            using (db)
+            {
+                var dbUser = (from u in db.UserDb
+                              where u.Email == email
+                              select u).FirstOrDefault();
+                return (dbUser != null);
+            }
+        }
 
-                return _mapper.MapToWebService(dbUser);
+        public bool UserNameExistsInProfile(string userName)
+        {
+            Log.Information($"In USerProfileService.EmailExistsInProfile(): Request recieved with userName {userName}");
+            using (db)
+            {
+                var dbUser = (from u in db.UserDb
+                              where u.Username == userName
+                              select u).FirstOrDefault();
+                return (dbUser != null);
             }
         }
 
         public IEnumerable<User> GetAllUsers()
         {
+            Log.Information($"In USerProfileService.GetAllUsers(): Request recieved");
             using (db)
             {
                 var users = new List<User>();
@@ -162,11 +248,77 @@ namespace TSB100UserProfileService
             }
         }
 
+        public User GetUserByUserNameOrEmail(string userName)
+        {
+            Log.Information($"In USerProfileService.GetUserByUserName(): Request recieved with userName {userName}");
+            using (db)
+            {
+                var dbUser = (from u in db.UserDb
+                              where u.Username == userName
+                              select u).FirstOrDefault();
+                if (dbUser == null)
+                {
+                    dbUser = (from u in db.UserDb
+                              where u.Email == userName
+                              select u).FirstOrDefault();
+                    if (dbUser == null)
+                    {
+                        Log.Warning($"In USerProfileService.GetUserByUserName(): No user found with userName or email {userName}");
+                    }
+                }
+                return _mapper.MapToWebService(dbUser);
+            }
+        }
+
+        public User GetUserByUserId(int userId)
+        {
+            Log.Information($"In USerProfileService.GetUserByUserId(): Request recieved with userId {userId}");
+            using (db)
+            {
+                var dbUser = (from u in db.UserDb
+                              where u.UserId == userId
+                              select u).FirstOrDefault();
+                if (dbUser == null)
+                {
+                    Log.Warning($"In USerProfileService.GetUserByUserId(): No user found with userId {userId}");
+                }
+
+                return _mapper.MapToWebService(dbUser);
+            }
+        }
+
+        //----------------------------------------------------------------------------------------
+        // Log functions
+        //----------------------------------------------------------------------------------------
+        public string GetLatestLog()
+        {
+            Log.Information($"In USerProfileService.GetTodaysLog(): Request recieved");
+            var lastLogFileName = FileReader.SingletonReader.GetDirectory(@"C:\logs\").Last();
+            if (lastLogFileName == null)
+            {
+                return "Error: No log file found";
+            }
+            var logFileLines = FileReader.SingletonReader.GetTextFileLines(lastLogFileName);
+            if (logFileLines == null)
+            {
+                return "Error: No log file found";
+            }
+
+            var logFile = string.Join(System.Environment.NewLine, logFileLines);
+            //Debug.WriteLine(logFile);
+            return logFile;
+        }
+
+
         //----------------------------------------------------------------------------------------
         // Helper methods
         //----------------------------------------------------------------------------------------
         #region helperMethods
 
+        /// <summary>
+        /// Saves the changes that have been made, and returns true if succeeded, and false if not
+        /// </summary>
+        /// <returns></returns>
         private bool UpdateDatabase()
         {
             try
@@ -183,7 +335,8 @@ namespace TSB100UserProfileService
                 || ex is InvalidOperationException
                 )
             {
-                //TODO: Create logging
+                // An database exception deserves a higher error level than warning. Let's do error level: Error
+                Log.Error($"In USerProfileService.UpdateDatabase(): Unable to apply changes in database. Exception of type {ex.GetType().Name} was thrown. Exception: {JsonConvert.SerializeObject(ex)}");
                 return false;
             }
         }

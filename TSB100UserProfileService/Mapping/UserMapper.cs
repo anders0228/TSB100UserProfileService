@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,6 +11,16 @@ namespace TSB100UserProfileService.Mapping
     {
         public void MapUserToModel(User user, UserDb userDb)
         {
+            if (user == null)
+            {
+                Log.Warning($"In UserMapper.MapUserToModel(): Unexpected null input. user==null");
+                return;
+            }
+            if (userDb == null)
+            {
+                Log.Warning($"In UserMapper.MapUserToModel(): Unexpected null input. userDb==null");
+                return;
+            }
             userDb.CreatedDate = DateTime.Now;
             userDb.Username = user.Username;
             userDb.UserId = user.Id;
@@ -26,6 +37,16 @@ namespace TSB100UserProfileService.Mapping
 
         public void MapNewUserToModel(NewUser newUser, UserDb userDb)
         {
+            if (newUser == null)
+            {
+                Log.Warning($"In UserMapper.MapNewUserToModel(): Unexpected null input. newUser==null");
+                return;
+            }
+            if (userDb == null)
+            {
+                Log.Warning($"In UserMapper.MapNewUserToModel(): Unexpected null input. userDb==null");
+                return;
+            }
             userDb.CreatedDate = DateTime.Now;
             userDb.Username = newUser.Username;
             userDb.Email = newUser.Email;
@@ -37,7 +58,7 @@ namespace TSB100UserProfileService.Mapping
         {
             if (userDb == null)
             {
-                // TODO: Create logging (debug)
+                Log.Warning($"In UserMapper.MapToWebService(): Unexpected null input. userDb==null");
                 return null;
             }
             var user = new User

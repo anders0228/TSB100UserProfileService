@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using TSB100UserProfileService.DataTransferObjects;
-using TSB100UserProfileService.ServiceAdapters;
 using TSB100UserProfileService.Validation;
 using Serilog;
 
@@ -10,13 +9,6 @@ namespace TSB100UserProfileService
 {
     internal class UserValidator
     {
-        private LoginAdapter _loginAdapter;
-
-        public UserValidator(LoginAdapter loginAdapter)
-        {
-            _loginAdapter = loginAdapter;
-        }
-
         internal bool ValidateNewUser(NewUser newUser)
         {
             var errors = new List<string>();
@@ -38,7 +30,7 @@ namespace TSB100UserProfileService
 
             if (errors.Count > 0)
             {
-                // Saves the errors as a long string
+                // Saves the errors as a long string in json format
                 Log.Debug(JsonConvert.SerializeObject(errors));
             }
             return true;
@@ -61,10 +53,10 @@ namespace TSB100UserProfileService
 
             if (errors.Count > 0)
             {
-                // Saves the errors as a long string
+                // Saves the errors as a long string in json format
                 Log.Debug(JsonConvert.SerializeObject(errors));
             }
-            return (errors.Count > 0);
+            return true;
         }
     }
 }

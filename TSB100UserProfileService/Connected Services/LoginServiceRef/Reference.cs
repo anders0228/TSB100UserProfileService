@@ -233,33 +233,30 @@ namespace TSB100UserProfileService.LoginServiceRef {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="User", Namespace="http://schemas.datacontract.org/2004/07/LoginProject.Interface")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InterfaceFlaggedUser", Namespace="http://schemas.datacontract.org/2004/07/LoginProject.Interface")]
     [System.SerializableAttribute()]
-    public partial class User : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class InterfaceFlaggedUser : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string EmailField;
+        private TSB100UserProfileService.LoginServiceRef.InterfaceUser FlaggedByField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int FlaggedByUserIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int IDField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PasswordField;
+        private string ReasonField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> RoleIDField;
+        private TSB100UserProfileService.LoginServiceRef.InterfaceUser WhoIsFlaggedField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.Roles RolesField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.Status StatusField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> StatusIDField;
+        private int WhoIsFlaggedIDField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -272,14 +269,27 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Email {
+        public TSB100UserProfileService.LoginServiceRef.InterfaceUser FlaggedBy {
             get {
-                return this.EmailField;
+                return this.FlaggedByField;
             }
             set {
-                if ((object.ReferenceEquals(this.EmailField, value) != true)) {
-                    this.EmailField = value;
-                    this.RaisePropertyChanged("Email");
+                if ((object.ReferenceEquals(this.FlaggedByField, value) != true)) {
+                    this.FlaggedByField = value;
+                    this.RaisePropertyChanged("FlaggedBy");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int FlaggedByUserId {
+            get {
+                return this.FlaggedByUserIdField;
+            }
+            set {
+                if ((this.FlaggedByUserIdField.Equals(value) != true)) {
+                    this.FlaggedByUserIdField = value;
+                    this.RaisePropertyChanged("FlaggedByUserId");
                 }
             }
         }
@@ -298,66 +308,40 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Password {
+        public string Reason {
             get {
-                return this.PasswordField;
+                return this.ReasonField;
             }
             set {
-                if ((object.ReferenceEquals(this.PasswordField, value) != true)) {
-                    this.PasswordField = value;
-                    this.RaisePropertyChanged("Password");
+                if ((object.ReferenceEquals(this.ReasonField, value) != true)) {
+                    this.ReasonField = value;
+                    this.RaisePropertyChanged("Reason");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> RoleID {
+        public TSB100UserProfileService.LoginServiceRef.InterfaceUser WhoIsFlagged {
             get {
-                return this.RoleIDField;
+                return this.WhoIsFlaggedField;
             }
             set {
-                if ((this.RoleIDField.Equals(value) != true)) {
-                    this.RoleIDField = value;
-                    this.RaisePropertyChanged("RoleID");
+                if ((object.ReferenceEquals(this.WhoIsFlaggedField, value) != true)) {
+                    this.WhoIsFlaggedField = value;
+                    this.RaisePropertyChanged("WhoIsFlagged");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.Roles Roles {
+        public int WhoIsFlaggedID {
             get {
-                return this.RolesField;
+                return this.WhoIsFlaggedIDField;
             }
             set {
-                if ((object.ReferenceEquals(this.RolesField, value) != true)) {
-                    this.RolesField = value;
-                    this.RaisePropertyChanged("Roles");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.Status Status {
-            get {
-                return this.StatusField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.StatusField, value) != true)) {
-                    this.StatusField = value;
-                    this.RaisePropertyChanged("Status");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> StatusID {
-            get {
-                return this.StatusIDField;
-            }
-            set {
-                if ((this.StatusIDField.Equals(value) != true)) {
-                    this.StatusIDField = value;
-                    this.RaisePropertyChanged("StatusID");
+                if ((this.WhoIsFlaggedIDField.Equals(value) != true)) {
+                    this.WhoIsFlaggedIDField = value;
+                    this.RaisePropertyChanged("WhoIsFlaggedID");
                 }
             }
         }
@@ -374,163 +358,9 @@ namespace TSB100UserProfileService.LoginServiceRef {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Roles", Namespace="http://schemas.datacontract.org/2004/07/LoginProject")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InterfaceUser", Namespace="http://schemas.datacontract.org/2004/07/LoginProject.Interface")]
     [System.SerializableAttribute()]
-    public partial class Roles : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IDField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string RoleField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.Users[] UsersField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int ID {
-            get {
-                return this.IDField;
-            }
-            set {
-                if ((this.IDField.Equals(value) != true)) {
-                    this.IDField = value;
-                    this.RaisePropertyChanged("ID");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Role {
-            get {
-                return this.RoleField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.RoleField, value) != true)) {
-                    this.RoleField = value;
-                    this.RaisePropertyChanged("Role");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.Users[] Users {
-            get {
-                return this.UsersField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UsersField, value) != true)) {
-                    this.UsersField = value;
-                    this.RaisePropertyChanged("Users");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Status", Namespace="http://schemas.datacontract.org/2004/07/LoginProject")]
-    [System.SerializableAttribute()]
-    public partial class Status : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IDField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string Status1Field;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.UserStatus[] UserStatusField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int ID {
-            get {
-                return this.IDField;
-            }
-            set {
-                if ((this.IDField.Equals(value) != true)) {
-                    this.IDField = value;
-                    this.RaisePropertyChanged("ID");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Status1 {
-            get {
-                return this.Status1Field;
-            }
-            set {
-                if ((object.ReferenceEquals(this.Status1Field, value) != true)) {
-                    this.Status1Field = value;
-                    this.RaisePropertyChanged("Status1");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.UserStatus[] UserStatus {
-            get {
-                return this.UserStatusField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UserStatusField, value) != true)) {
-                    this.UserStatusField = value;
-                    this.RaisePropertyChanged("UserStatus");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Users", Namespace="http://schemas.datacontract.org/2004/07/LoginProject")]
-    [System.SerializableAttribute()]
-    public partial class Users : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class InterfaceUser : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -548,22 +378,19 @@ namespace TSB100UserProfileService.LoginServiceRef {
         private string PasswordField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int RoleIDField;
+        private System.Nullable<int> RoleIDField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.Roles RolesField;
+        private TSB100UserProfileService.LoginServiceRef.InterfaceRole RolesField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int StatusIDField;
+        private TSB100UserProfileService.LoginServiceRef.InterfaceStatus StatusField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Nullable<int> StatusIDField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SurnameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.UserStatus[] UserStatusField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.UserStatus[] UserStatus1Field;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string UsernameField;
@@ -631,7 +458,7 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int RoleID {
+        public System.Nullable<int> RoleID {
             get {
                 return this.RoleIDField;
             }
@@ -644,7 +471,7 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.Roles Roles {
+        public TSB100UserProfileService.LoginServiceRef.InterfaceRole Roles {
             get {
                 return this.RolesField;
             }
@@ -657,7 +484,20 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int StatusID {
+        public TSB100UserProfileService.LoginServiceRef.InterfaceStatus Status {
+            get {
+                return this.StatusField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.StatusField, value) != true)) {
+                    this.StatusField = value;
+                    this.RaisePropertyChanged("Status");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Nullable<int> StatusID {
             get {
                 return this.StatusIDField;
             }
@@ -678,32 +518,6 @@ namespace TSB100UserProfileService.LoginServiceRef {
                 if ((object.ReferenceEquals(this.SurnameField, value) != true)) {
                     this.SurnameField = value;
                     this.RaisePropertyChanged("Surname");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.UserStatus[] UserStatus {
-            get {
-                return this.UserStatusField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UserStatusField, value) != true)) {
-                    this.UserStatusField = value;
-                    this.RaisePropertyChanged("UserStatus");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.UserStatus[] UserStatus1 {
-            get {
-                return this.UserStatus1Field;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UserStatus1Field, value) != true)) {
-                    this.UserStatus1Field = value;
-                    this.RaisePropertyChanged("UserStatus1");
                 }
             }
         }
@@ -733,51 +547,18 @@ namespace TSB100UserProfileService.LoginServiceRef {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="UserStatus", Namespace="http://schemas.datacontract.org/2004/07/LoginProject")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InterfaceRole", Namespace="http://schemas.datacontract.org/2004/07/LoginProject.Interface")]
     [System.SerializableAttribute()]
-    public partial class UserStatus : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class InterfaceRole : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.Admin AdminField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.DateTime DateFromField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.DateTime DateToField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string EmailField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> FlaggedByField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int IDField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ReasonField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.Status StatusField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int SuspendedByField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> TypeField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int UserIDField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.Users UsersField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.Users Users1Field;
+        private string RoleField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -790,14 +571,157 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.Admin Admin {
+        public int ID {
             get {
-                return this.AdminField;
+                return this.IDField;
             }
             set {
-                if ((object.ReferenceEquals(this.AdminField, value) != true)) {
-                    this.AdminField = value;
-                    this.RaisePropertyChanged("Admin");
+                if ((this.IDField.Equals(value) != true)) {
+                    this.IDField = value;
+                    this.RaisePropertyChanged("ID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Role {
+            get {
+                return this.RoleField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.RoleField, value) != true)) {
+                    this.RoleField = value;
+                    this.RaisePropertyChanged("Role");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InterfaceStatus", Namespace="http://schemas.datacontract.org/2004/07/LoginProject.Interface")]
+    [System.SerializableAttribute()]
+    public partial class InterfaceStatus : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string StatusNameField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int ID {
+            get {
+                return this.IDField;
+            }
+            set {
+                if ((this.IDField.Equals(value) != true)) {
+                    this.IDField = value;
+                    this.RaisePropertyChanged("ID");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string StatusName {
+            get {
+                return this.StatusNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.StatusNameField, value) != true)) {
+                    this.StatusNameField = value;
+                    this.RaisePropertyChanged("StatusName");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InterfaceBlockedUser", Namespace="http://schemas.datacontract.org/2004/07/LoginProject.Interface")]
+    [System.SerializableAttribute()]
+    public partial class InterfaceBlockedUser : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private TSB100UserProfileService.LoginServiceRef.InterfaceAdmin BannerField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DateFromField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime DateToField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int EmailField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IDField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ReasonField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int SuspendedByField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int UserIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private TSB100UserProfileService.LoginServiceRef.InterfaceUser UserObjectField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public TSB100UserProfileService.LoginServiceRef.InterfaceAdmin Banner {
+            get {
+                return this.BannerField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.BannerField, value) != true)) {
+                    this.BannerField = value;
+                    this.RaisePropertyChanged("Banner");
                 }
             }
         }
@@ -829,27 +753,14 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Email {
+        public int Email {
             get {
                 return this.EmailField;
             }
             set {
-                if ((object.ReferenceEquals(this.EmailField, value) != true)) {
+                if ((this.EmailField.Equals(value) != true)) {
                     this.EmailField = value;
                     this.RaisePropertyChanged("Email");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> FlaggedBy {
-            get {
-                return this.FlaggedByField;
-            }
-            set {
-                if ((this.FlaggedByField.Equals(value) != true)) {
-                    this.FlaggedByField = value;
-                    this.RaisePropertyChanged("FlaggedBy");
                 }
             }
         }
@@ -881,19 +792,6 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.Status Status {
-            get {
-                return this.StatusField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.StatusField, value) != true)) {
-                    this.StatusField = value;
-                    this.RaisePropertyChanged("Status");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
         public int SuspendedBy {
             get {
                 return this.SuspendedByField;
@@ -907,53 +805,27 @@ namespace TSB100UserProfileService.LoginServiceRef {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> Type {
+        public int UserId {
             get {
-                return this.TypeField;
+                return this.UserIdField;
             }
             set {
-                if ((this.TypeField.Equals(value) != true)) {
-                    this.TypeField = value;
-                    this.RaisePropertyChanged("Type");
+                if ((this.UserIdField.Equals(value) != true)) {
+                    this.UserIdField = value;
+                    this.RaisePropertyChanged("UserId");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int UserID {
+        public TSB100UserProfileService.LoginServiceRef.InterfaceUser UserObject {
             get {
-                return this.UserIDField;
+                return this.UserObjectField;
             }
             set {
-                if ((this.UserIDField.Equals(value) != true)) {
-                    this.UserIDField = value;
-                    this.RaisePropertyChanged("UserID");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.Users Users {
-            get {
-                return this.UsersField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UsersField, value) != true)) {
-                    this.UsersField = value;
-                    this.RaisePropertyChanged("Users");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.Users Users1 {
-            get {
-                return this.Users1Field;
-            }
-            set {
-                if ((object.ReferenceEquals(this.Users1Field, value) != true)) {
-                    this.Users1Field = value;
-                    this.RaisePropertyChanged("Users1");
+                if ((object.ReferenceEquals(this.UserObjectField, value) != true)) {
+                    this.UserObjectField = value;
+                    this.RaisePropertyChanged("UserObject");
                 }
             }
         }
@@ -970,9 +842,9 @@ namespace TSB100UserProfileService.LoginServiceRef {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Admin", Namespace="http://schemas.datacontract.org/2004/07/LoginProject")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="InterfaceAdmin", Namespace="http://schemas.datacontract.org/2004/07/LoginProject.Interface")]
     [System.SerializableAttribute()]
-    public partial class Admin : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class InterfaceAdmin : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -982,9 +854,6 @@ namespace TSB100UserProfileService.LoginServiceRef {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string PasswordField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TSB100UserProfileService.LoginServiceRef.UserStatus[] UserStatusField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string UsernameField;
@@ -1021,19 +890,6 @@ namespace TSB100UserProfileService.LoginServiceRef {
                 if ((object.ReferenceEquals(this.PasswordField, value) != true)) {
                     this.PasswordField = value;
                     this.RaisePropertyChanged("Password");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public TSB100UserProfileService.LoginServiceRef.UserStatus[] UserStatus {
-            get {
-                return this.UserStatusField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UserStatusField, value) != true)) {
-                    this.UserStatusField = value;
-                    this.RaisePropertyChanged("UserStatus");
                 }
             }
         }
@@ -1089,35 +945,47 @@ namespace TSB100UserProfileService.LoginServiceRef {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/DeleteUser", ReplyAction="http://tempuri.org/ILoginService/DeleteUserResponse")]
         System.Threading.Tasks.Task<bool> DeleteUserAsync(int UserId);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/UnflagUser", ReplyAction="http://tempuri.org/ILoginService/UnflagUserResponse")]
+        bool UnflagUser(int UserId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/UnflagUser", ReplyAction="http://tempuri.org/ILoginService/UnflagUserResponse")]
+        System.Threading.Tasks.Task<bool> UnflagUserAsync(int UserId);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/CheckUser", ReplyAction="http://tempuri.org/ILoginService/CheckUserResponse")]
         bool CheckUser(string Email, string Password);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/CheckUser", ReplyAction="http://tempuri.org/ILoginService/CheckUserResponse")]
         System.Threading.Tasks.Task<bool> CheckUserAsync(string Email, string Password);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetFlaggedUsers", ReplyAction="http://tempuri.org/ILoginService/GetFlaggedUsersResponse")]
-        TSB100UserProfileService.LoginServiceRef.User[] GetFlaggedUsers();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetUserId", ReplyAction="http://tempuri.org/ILoginService/GetUserIdResponse")]
+        int GetUserId(string Email);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetUserId", ReplyAction="http://tempuri.org/ILoginService/GetUserIdResponse")]
+        System.Threading.Tasks.Task<int> GetUserIdAsync(string Email);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetFlaggedUsers", ReplyAction="http://tempuri.org/ILoginService/GetFlaggedUsersResponse")]
-        System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.User[]> GetFlaggedUsersAsync();
+        TSB100UserProfileService.LoginServiceRef.InterfaceFlaggedUser[] GetFlaggedUsers();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetFlaggedUsers", ReplyAction="http://tempuri.org/ILoginService/GetFlaggedUsersResponse")]
+        System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.InterfaceFlaggedUser[]> GetFlaggedUsersAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetBlockedUsers", ReplyAction="http://tempuri.org/ILoginService/GetBlockedUsersResponse")]
-        TSB100UserProfileService.LoginServiceRef.User[] GetBlockedUsers();
+        TSB100UserProfileService.LoginServiceRef.InterfaceBlockedUser[] GetBlockedUsers();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetBlockedUsers", ReplyAction="http://tempuri.org/ILoginService/GetBlockedUsersResponse")]
-        System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.User[]> GetBlockedUsersAsync();
+        System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.InterfaceBlockedUser[]> GetBlockedUsersAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetModerators", ReplyAction="http://tempuri.org/ILoginService/GetModeratorsResponse")]
-        TSB100UserProfileService.LoginServiceRef.User[] GetModerators();
+        TSB100UserProfileService.LoginServiceRef.InterfaceUser[] GetModerators();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetModerators", ReplyAction="http://tempuri.org/ILoginService/GetModeratorsResponse")]
-        System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.User[]> GetModeratorsAsync();
+        System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.InterfaceUser[]> GetModeratorsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetActiveUsers", ReplyAction="http://tempuri.org/ILoginService/GetActiveUsersResponse")]
-        TSB100UserProfileService.LoginServiceRef.User[] GetActiveUsers();
+        TSB100UserProfileService.LoginServiceRef.InterfaceUser[] GetActiveUsers();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/GetActiveUsers", ReplyAction="http://tempuri.org/ILoginService/GetActiveUsersResponse")]
-        System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.User[]> GetActiveUsersAsync();
+        System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.InterfaceUser[]> GetActiveUsersAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/FlagUser", ReplyAction="http://tempuri.org/ILoginService/FlagUserResponse")]
         bool FlagUser(int FlaggedByUserId, string Reason, int FlaggedUserId);
@@ -1131,11 +999,35 @@ namespace TSB100UserProfileService.LoginServiceRef {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/BlockUser", ReplyAction="http://tempuri.org/ILoginService/BlockUserResponse")]
         System.Threading.Tasks.Task<bool> BlockUserAsync(int Id, int AdminId, string reason, System.DateTime dateTo);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/AssignRole", ReplyAction="http://tempuri.org/ILoginService/AssignRoleResponse")]
-        bool AssignRole(int ID);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/AssignModeratorRole", ReplyAction="http://tempuri.org/ILoginService/AssignModeratorRoleResponse")]
+        bool AssignModeratorRole(int ID);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/AssignRole", ReplyAction="http://tempuri.org/ILoginService/AssignRoleResponse")]
-        System.Threading.Tasks.Task<bool> AssignRoleAsync(int ID);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/AssignModeratorRole", ReplyAction="http://tempuri.org/ILoginService/AssignModeratorRoleResponse")]
+        System.Threading.Tasks.Task<bool> AssignModeratorRoleAsync(int ID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/AssignUserRole", ReplyAction="http://tempuri.org/ILoginService/AssignUserRoleResponse")]
+        bool AssignUserRole(int ID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/AssignUserRole", ReplyAction="http://tempuri.org/ILoginService/AssignUserRoleResponse")]
+        System.Threading.Tasks.Task<bool> AssignUserRoleAsync(int ID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/EmailExist", ReplyAction="http://tempuri.org/ILoginService/EmailExistResponse")]
+        bool EmailExist(string Email);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/EmailExist", ReplyAction="http://tempuri.org/ILoginService/EmailExistResponse")]
+        System.Threading.Tasks.Task<bool> EmailExistAsync(string Email);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/UsernameExist", ReplyAction="http://tempuri.org/ILoginService/UsernameExistResponse")]
+        bool UsernameExist(string Username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/UsernameExist", ReplyAction="http://tempuri.org/ILoginService/UsernameExistResponse")]
+        System.Threading.Tasks.Task<bool> UsernameExistAsync(string Username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/UserIdExist", ReplyAction="http://tempuri.org/ILoginService/UserIdExistResponse")]
+        bool UserIdExist(int ID);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILoginService/UserIdExist", ReplyAction="http://tempuri.org/ILoginService/UserIdExistResponse")]
+        System.Threading.Tasks.Task<bool> UserIdExistAsync(int ID);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -1197,6 +1089,14 @@ namespace TSB100UserProfileService.LoginServiceRef {
             return base.Channel.DeleteUserAsync(UserId);
         }
         
+        public bool UnflagUser(int UserId) {
+            return base.Channel.UnflagUser(UserId);
+        }
+        
+        public System.Threading.Tasks.Task<bool> UnflagUserAsync(int UserId) {
+            return base.Channel.UnflagUserAsync(UserId);
+        }
+        
         public bool CheckUser(string Email, string Password) {
             return base.Channel.CheckUser(Email, Password);
         }
@@ -1205,35 +1105,43 @@ namespace TSB100UserProfileService.LoginServiceRef {
             return base.Channel.CheckUserAsync(Email, Password);
         }
         
-        public TSB100UserProfileService.LoginServiceRef.User[] GetFlaggedUsers() {
+        public int GetUserId(string Email) {
+            return base.Channel.GetUserId(Email);
+        }
+        
+        public System.Threading.Tasks.Task<int> GetUserIdAsync(string Email) {
+            return base.Channel.GetUserIdAsync(Email);
+        }
+        
+        public TSB100UserProfileService.LoginServiceRef.InterfaceFlaggedUser[] GetFlaggedUsers() {
             return base.Channel.GetFlaggedUsers();
         }
         
-        public System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.User[]> GetFlaggedUsersAsync() {
+        public System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.InterfaceFlaggedUser[]> GetFlaggedUsersAsync() {
             return base.Channel.GetFlaggedUsersAsync();
         }
         
-        public TSB100UserProfileService.LoginServiceRef.User[] GetBlockedUsers() {
+        public TSB100UserProfileService.LoginServiceRef.InterfaceBlockedUser[] GetBlockedUsers() {
             return base.Channel.GetBlockedUsers();
         }
         
-        public System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.User[]> GetBlockedUsersAsync() {
+        public System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.InterfaceBlockedUser[]> GetBlockedUsersAsync() {
             return base.Channel.GetBlockedUsersAsync();
         }
         
-        public TSB100UserProfileService.LoginServiceRef.User[] GetModerators() {
+        public TSB100UserProfileService.LoginServiceRef.InterfaceUser[] GetModerators() {
             return base.Channel.GetModerators();
         }
         
-        public System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.User[]> GetModeratorsAsync() {
+        public System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.InterfaceUser[]> GetModeratorsAsync() {
             return base.Channel.GetModeratorsAsync();
         }
         
-        public TSB100UserProfileService.LoginServiceRef.User[] GetActiveUsers() {
+        public TSB100UserProfileService.LoginServiceRef.InterfaceUser[] GetActiveUsers() {
             return base.Channel.GetActiveUsers();
         }
         
-        public System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.User[]> GetActiveUsersAsync() {
+        public System.Threading.Tasks.Task<TSB100UserProfileService.LoginServiceRef.InterfaceUser[]> GetActiveUsersAsync() {
             return base.Channel.GetActiveUsersAsync();
         }
         
@@ -1253,12 +1161,44 @@ namespace TSB100UserProfileService.LoginServiceRef {
             return base.Channel.BlockUserAsync(Id, AdminId, reason, dateTo);
         }
         
-        public bool AssignRole(int ID) {
-            return base.Channel.AssignRole(ID);
+        public bool AssignModeratorRole(int ID) {
+            return base.Channel.AssignModeratorRole(ID);
         }
         
-        public System.Threading.Tasks.Task<bool> AssignRoleAsync(int ID) {
-            return base.Channel.AssignRoleAsync(ID);
+        public System.Threading.Tasks.Task<bool> AssignModeratorRoleAsync(int ID) {
+            return base.Channel.AssignModeratorRoleAsync(ID);
+        }
+        
+        public bool AssignUserRole(int ID) {
+            return base.Channel.AssignUserRole(ID);
+        }
+        
+        public System.Threading.Tasks.Task<bool> AssignUserRoleAsync(int ID) {
+            return base.Channel.AssignUserRoleAsync(ID);
+        }
+        
+        public bool EmailExist(string Email) {
+            return base.Channel.EmailExist(Email);
+        }
+        
+        public System.Threading.Tasks.Task<bool> EmailExistAsync(string Email) {
+            return base.Channel.EmailExistAsync(Email);
+        }
+        
+        public bool UsernameExist(string Username) {
+            return base.Channel.UsernameExist(Username);
+        }
+        
+        public System.Threading.Tasks.Task<bool> UsernameExistAsync(string Username) {
+            return base.Channel.UsernameExistAsync(Username);
+        }
+        
+        public bool UserIdExist(int ID) {
+            return base.Channel.UserIdExist(ID);
+        }
+        
+        public System.Threading.Tasks.Task<bool> UserIdExistAsync(int ID) {
+            return base.Channel.UserIdExistAsync(ID);
         }
     }
 }

@@ -5,7 +5,6 @@
       <xsd:import schemaLocation="http://193.10.202.76/LoginProject/LoginProject/LoginService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
       <xsd:import schemaLocation="http://193.10.202.76/LoginProject/LoginProject/LoginService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="http://193.10.202.76/LoginProject/LoginProject/LoginService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/LoginProject.Interface" />
-      <xsd:import schemaLocation="http://193.10.202.76/LoginProject/LoginProject/LoginService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/LoginProject" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="ILoginService_CreateUser_InputMessage">
@@ -32,11 +31,23 @@
   <wsdl:message name="ILoginService_DeleteUser_OutputMessage">
     <wsdl:part name="parameters" element="tns:DeleteUserResponse" />
   </wsdl:message>
+  <wsdl:message name="ILoginService_UnflagUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:UnflagUser" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_UnflagUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UnflagUserResponse" />
+  </wsdl:message>
   <wsdl:message name="ILoginService_CheckUser_InputMessage">
     <wsdl:part name="parameters" element="tns:CheckUser" />
   </wsdl:message>
   <wsdl:message name="ILoginService_CheckUser_OutputMessage">
     <wsdl:part name="parameters" element="tns:CheckUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_GetUserId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserId" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_GetUserId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserIdResponse" />
   </wsdl:message>
   <wsdl:message name="ILoginService_GetFlaggedUsers_InputMessage">
     <wsdl:part name="parameters" element="tns:GetFlaggedUsers" />
@@ -74,11 +85,35 @@
   <wsdl:message name="ILoginService_BlockUser_OutputMessage">
     <wsdl:part name="parameters" element="tns:BlockUserResponse" />
   </wsdl:message>
-  <wsdl:message name="ILoginService_AssignRole_InputMessage">
-    <wsdl:part name="parameters" element="tns:AssignRole" />
+  <wsdl:message name="ILoginService_AssignModeratorRole_InputMessage">
+    <wsdl:part name="parameters" element="tns:AssignModeratorRole" />
   </wsdl:message>
-  <wsdl:message name="ILoginService_AssignRole_OutputMessage">
-    <wsdl:part name="parameters" element="tns:AssignRoleResponse" />
+  <wsdl:message name="ILoginService_AssignModeratorRole_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AssignModeratorRoleResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_AssignUserRole_InputMessage">
+    <wsdl:part name="parameters" element="tns:AssignUserRole" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_AssignUserRole_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AssignUserRoleResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_EmailExist_InputMessage">
+    <wsdl:part name="parameters" element="tns:EmailExist" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_EmailExist_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EmailExistResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_UsernameExist_InputMessage">
+    <wsdl:part name="parameters" element="tns:UsernameExist" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_UsernameExist_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UsernameExistResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_UserIdExist_InputMessage">
+    <wsdl:part name="parameters" element="tns:UserIdExist" />
+  </wsdl:message>
+  <wsdl:message name="ILoginService_UserIdExist_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UserIdExistResponse" />
   </wsdl:message>
   <wsdl:portType name="ILoginService">
     <wsdl:operation name="CreateUser">
@@ -97,9 +132,17 @@
       <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/DeleteUser" message="tns:ILoginService_DeleteUser_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/DeleteUserResponse" message="tns:ILoginService_DeleteUser_OutputMessage" />
     </wsdl:operation>
+    <wsdl:operation name="UnflagUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/UnflagUser" message="tns:ILoginService_UnflagUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/UnflagUserResponse" message="tns:ILoginService_UnflagUser_OutputMessage" />
+    </wsdl:operation>
     <wsdl:operation name="CheckUser">
       <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/CheckUser" message="tns:ILoginService_CheckUser_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/CheckUserResponse" message="tns:ILoginService_CheckUser_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserId">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/GetUserId" message="tns:ILoginService_GetUserId_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/GetUserIdResponse" message="tns:ILoginService_GetUserId_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="GetFlaggedUsers">
       <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/GetFlaggedUsers" message="tns:ILoginService_GetFlaggedUsers_InputMessage" />
@@ -125,9 +168,25 @@
       <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/BlockUser" message="tns:ILoginService_BlockUser_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/BlockUserResponse" message="tns:ILoginService_BlockUser_OutputMessage" />
     </wsdl:operation>
-    <wsdl:operation name="AssignRole">
-      <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/AssignRole" message="tns:ILoginService_AssignRole_InputMessage" />
-      <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/AssignRoleResponse" message="tns:ILoginService_AssignRole_OutputMessage" />
+    <wsdl:operation name="AssignModeratorRole">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/AssignModeratorRole" message="tns:ILoginService_AssignModeratorRole_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/AssignModeratorRoleResponse" message="tns:ILoginService_AssignModeratorRole_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AssignUserRole">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/AssignUserRole" message="tns:ILoginService_AssignUserRole_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/AssignUserRoleResponse" message="tns:ILoginService_AssignUserRole_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EmailExist">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/EmailExist" message="tns:ILoginService_EmailExist_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/EmailExistResponse" message="tns:ILoginService_EmailExist_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UsernameExist">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/UsernameExist" message="tns:ILoginService_UsernameExist_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/UsernameExistResponse" message="tns:ILoginService_UsernameExist_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UserIdExist">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILoginService/UserIdExist" message="tns:ILoginService_UserIdExist_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILoginService/UserIdExistResponse" message="tns:ILoginService_UserIdExist_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_ILoginService" type="tns:ILoginService">
@@ -168,8 +227,26 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UnflagUser">
+      <soap:operation soapAction="http://tempuri.org/ILoginService/UnflagUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="CheckUser">
       <soap:operation soapAction="http://tempuri.org/ILoginService/CheckUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserId">
+      <soap:operation soapAction="http://tempuri.org/ILoginService/GetUserId" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -231,8 +308,44 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="AssignRole">
-      <soap:operation soapAction="http://tempuri.org/ILoginService/AssignRole" style="document" />
+    <wsdl:operation name="AssignModeratorRole">
+      <soap:operation soapAction="http://tempuri.org/ILoginService/AssignModeratorRole" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AssignUserRole">
+      <soap:operation soapAction="http://tempuri.org/ILoginService/AssignUserRole" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EmailExist">
+      <soap:operation soapAction="http://tempuri.org/ILoginService/EmailExist" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UsernameExist">
+      <soap:operation soapAction="http://tempuri.org/ILoginService/UsernameExist" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UserIdExist">
+      <soap:operation soapAction="http://tempuri.org/ILoginService/UserIdExist" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

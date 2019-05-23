@@ -59,6 +59,20 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="UnflagUser">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="UserId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UnflagUserResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="UnflagUserResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="CheckUser">
     <xs:complexType>
       <xs:sequence>
@@ -74,6 +88,20 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="GetUserId">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetUserIdResult" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="GetFlaggedUsers">
     <xs:complexType>
       <xs:sequence />
@@ -82,7 +110,7 @@
   <xs:element name="GetFlaggedUsersResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/LoginProject.Interface" minOccurs="0" name="GetFlaggedUsersResult" nillable="true" type="q3:ArrayOfUser" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/LoginProject.Interface" minOccurs="0" name="GetFlaggedUsersResult" nillable="true" type="q3:ArrayOfInterfaceFlaggedUser" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -94,7 +122,7 @@
   <xs:element name="GetBlockedUsersResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/LoginProject.Interface" minOccurs="0" name="GetBlockedUsersResult" nillable="true" type="q4:ArrayOfUser" />
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/LoginProject.Interface" minOccurs="0" name="GetBlockedUsersResult" nillable="true" type="q4:ArrayOfInterfaceBlockedUser" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -106,7 +134,7 @@
   <xs:element name="GetModeratorsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/LoginProject.Interface" minOccurs="0" name="GetModeratorsResult" nillable="true" type="q5:ArrayOfUser" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/LoginProject.Interface" minOccurs="0" name="GetModeratorsResult" nillable="true" type="q5:ArrayOfInterfaceUser" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -118,7 +146,7 @@
   <xs:element name="GetActiveUsersResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/LoginProject.Interface" minOccurs="0" name="GetActiveUsersResult" nillable="true" type="q6:ArrayOfUser" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/LoginProject.Interface" minOccurs="0" name="GetActiveUsersResult" nillable="true" type="q6:ArrayOfInterfaceUser" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -155,17 +183,73 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="AssignRole">
+  <xs:element name="AssignModeratorRole">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="ID" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="AssignRoleResponse">
+  <xs:element name="AssignModeratorRoleResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="AssignRoleResult" type="xs:boolean" />
+        <xs:element minOccurs="0" name="AssignModeratorRoleResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AssignUserRole">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ID" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AssignUserRoleResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="AssignUserRoleResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EmailExist">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="EmailExistResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="EmailExistResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UsernameExist">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UsernameExistResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="UsernameExistResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UserIdExist">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ID" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UserIdExistResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="UserIdExistResult" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
