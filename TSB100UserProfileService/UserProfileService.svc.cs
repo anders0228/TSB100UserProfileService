@@ -89,8 +89,7 @@ namespace TSB100UserProfileService
         public bool UpdateUser(User user)
         {
             Log.Information($"In USerProfileService.UpdateUser(): Request recieved with User {JsonConvert.SerializeObject(user)}");
-            // TODO: Login Service does not have an UpdateUser() function - cannot pass parameters (password, email, username, first and lastname) to that service, so that they are updated there
-            // TODO: validate like with NewUser (but with the User class)
+            // Login Service does not have an UpdateUser() function - cannot pass parameters (password, email, username, first and lastname) to that service, so that they are updated there
 
             if (!_validator.ValidateUser(user))
             {
@@ -309,6 +308,13 @@ namespace TSB100UserProfileService
             return logFile;
         }
 
+        //----------------------------------------------------------------------------------------
+        // Monitoring functions
+        //----------------------------------------------------------------------------------------
+        public bool IsAlive()
+        {
+            return true;
+        }
 
         //----------------------------------------------------------------------------------------
         // Helper methods
