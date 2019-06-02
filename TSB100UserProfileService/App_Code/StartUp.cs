@@ -8,7 +8,6 @@ namespace TSB100UserProfileService.App_Code
 {
     public class StartUp
     {
-        // Denna metod kommer att köras vid startup
         public static void AppInitialize()
         {
             // Create a Logger-singleton     

@@ -4,12 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using TSB100UserProfileService.DataTransferObjects;
+using TSB100UserProfileService.LoginServiceRef;
 
 namespace TSB100UserProfileService.Mapping
 {
     internal class UserMapper
     {
-        public void MapUserToModel(User user, UserDb userDb)
+        // We do have a lot of user related objects!!
+        // Here is a list of them: 
+        //   TSB100UserProfileService.UserDb
+        //   TSB100UserProfileService.DataTransferObjects.NewUser
+        //   TSB100UserProfileService.DataTransferObjects.User
+        //   TSB100UserProfileService.LoginServiceRef.NewUser
+        //   TSB100UserProfileService.LoginServiceRef.ReturnUser
+        //   TSB100UserProfileService.LoginServiceRef.InterfaceUser
+
+        public void MapUserToUserDb(User user, UserDb userDb)
         {
             if (user == null)
             {
@@ -35,7 +45,7 @@ namespace TSB100UserProfileService.Mapping
             userDb.ZipCode = user.ZipCode;
         }
 
-        public void MapNewUserToModel(NewUser newUser, UserDb userDb)
+        public void MapNewUserToUserDb(DataTransferObjects.NewUser newUser, UserDb userDb)
         {
             if (newUser == null)
             {
@@ -54,7 +64,19 @@ namespace TSB100UserProfileService.Mapping
             userDb.Surname = newUser.Surname;
         }
 
-        public User MapToWebService(UserDb userDb)
+        internal LoginServiceRef.NewUser MapDTONewUserToLoginServiceNewUser(DataTransferObjects.NewUser newUserFromWeb)
+        {
+            return new LoginServiceRef.NewUser
+            {
+                Email = newUserFromWeb.Email,
+                Firstname = newUserFromWeb.FirstName,
+                Surname = newUserFromWeb.Surname,
+                Password = newUserFromWeb.Password,
+                Username = newUserFromWeb.Username
+            };
+        }
+
+        public User MapUserDbToUser(UserDb userDb)
         {
             if (userDb == null)
             {
@@ -76,6 +98,30 @@ namespace TSB100UserProfileService.Mapping
                 ZipCode = userDb.ZipCode,
             };
             return user;
+        }
+
+        internal ReturnUser MapInterfaceUserToReturnUser(InterfaceUser interfaceUser)
+        {
+            return new ReturnUser()
+            {
+                Email = interfaceUser.Email,
+                Firstname = interfaceUser.Firstname,
+                ID = interfaceUser.ID,
+                Surname = interfaceUser.Surname,
+                Username = interfaceUser.Username,
+            };
+        }
+
+        internal ReturnUser MapUserToReturnUser(User user)
+        {
+            return new ReturnUser
+            {
+                ID = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Firstname = user.Name,
+                Surname = user.Surname,
+            };
         }
     }
 }

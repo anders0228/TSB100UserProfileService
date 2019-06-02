@@ -20,23 +20,6 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ReturnUser" nillable="true" type="tns:ReturnUser" />
-  <xs:complexType name="ArrayOfInterfaceFlaggedUser">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="InterfaceFlaggedUser" nillable="true" type="tns:InterfaceFlaggedUser" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfInterfaceFlaggedUser" nillable="true" type="tns:ArrayOfInterfaceFlaggedUser" />
-  <xs:complexType name="InterfaceFlaggedUser">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="FlaggedBy" nillable="true" type="tns:InterfaceUser" />
-      <xs:element minOccurs="0" name="FlaggedByUserId" type="xs:int" />
-      <xs:element minOccurs="0" name="ID" type="xs:int" />
-      <xs:element minOccurs="0" name="Reason" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="WhoIsFlagged" nillable="true" type="tns:InterfaceUser" />
-      <xs:element minOccurs="0" name="WhoIsFlaggedID" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="InterfaceFlaggedUser" nillable="true" type="tns:InterfaceFlaggedUser" />
   <xs:complexType name="InterfaceUser">
     <xs:sequence>
       <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
@@ -66,6 +49,23 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="InterfaceStatus" nillable="true" type="tns:InterfaceStatus" />
+  <xs:complexType name="ArrayOfInterfaceFlaggedUser">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="InterfaceFlaggedUser" nillable="true" type="tns:InterfaceFlaggedUser" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfInterfaceFlaggedUser" nillable="true" type="tns:ArrayOfInterfaceFlaggedUser" />
+  <xs:complexType name="InterfaceFlaggedUser">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FlaggedBy" nillable="true" type="tns:InterfaceUser" />
+      <xs:element minOccurs="0" name="FlaggedByUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="ID" type="xs:int" />
+      <xs:element minOccurs="0" name="Reason" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="WhoIsFlagged" nillable="true" type="tns:InterfaceUser" />
+      <xs:element minOccurs="0" name="WhoIsFlaggedID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="InterfaceFlaggedUser" nillable="true" type="tns:InterfaceFlaggedUser" />
   <xs:complexType name="ArrayOfInterfaceBlockedUser">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="InterfaceBlockedUser" nillable="true" type="tns:InterfaceBlockedUser" />
@@ -88,8 +88,8 @@
   <xs:element name="InterfaceBlockedUser" nillable="true" type="tns:InterfaceBlockedUser" />
   <xs:complexType name="InterfaceAdmin">
     <xs:sequence>
+      <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ID" type="xs:int" />
-      <xs:element minOccurs="0" name="Password" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
@@ -100,4 +100,10 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfInterfaceUser" nillable="true" type="tns:ArrayOfInterfaceUser" />
+  <xs:complexType name="ArrayOfInterfaceAdmin">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="InterfaceAdmin" nillable="true" type="tns:InterfaceAdmin" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfInterfaceAdmin" nillable="true" type="tns:ArrayOfInterfaceAdmin" />
 </xs:schema>

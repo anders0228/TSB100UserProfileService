@@ -167,6 +167,9 @@
     <Content Include="Connected Services\LoginServiceRef\TSB100UserProfileService.LoginServiceRef.InterfaceUser.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
+    <Content Include="Connected Services\LoginServiceRef\TSB100UserProfileService.LoginServiceRef.InterfaceAdmin.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
     <None Include="packages.config" />
     <Content Include="UserProfileModel.edmx.diagram">
       <DependentUpon>UserProfileModel.edmx</DependentUpon>

@@ -8,6 +8,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Serilog;
 using TSB100UserProfileService.DataTransferObjects;
+using TSB100UserProfileService.LoginServiceRef;
 using TSB100UserProfileService.Mapping;
 
 namespace TSB100UserProfileService
@@ -29,10 +30,11 @@ namespace TSB100UserProfileService
         //----------------------------------------------------------------------------------------
         // Create & Update
         //----------------------------------------------------------------------------------------
-        public User CreateUser(NewUser newUserFromWeb)
+        public User CreateUser(TSB100UserProfileService.DataTransferObjects.NewUser newUserFromWeb)
         {
             Log.Information($"In USerProfileService.CreateUser(): Request recieved with NewUser {JsonConvert.SerializeObject(newUserFromWeb)}");
 
+            // Step 1: Validate input data
             if (!_validator.ValidateNewUser(newUserFromWeb))
             {
                 return null;
@@ -40,24 +42,16 @@ namespace TSB100UserProfileService
 
             int userId;
 
+            // Step 2: Save NewUser to LoginService
             using (var loginService = new LoginServiceRef.LoginServiceClient())
             {
-                var newUser = new LoginServiceRef.NewUser
-                {
-                    Email = newUserFromWeb.Email,
-                    Firstname = newUserFromWeb.FirstName,
-                    Surname = newUserFromWeb.Surname,
-                    Password = newUserFromWeb.Password,
-                    Username = newUserFromWeb.Username
-                };
-
+                LoginServiceRef.NewUser newUser = _mapper.MapDTONewUserToLoginServiceNewUser(newUserFromWeb);
                 var returnUser = loginService.CreateUser(newUser);
 
                 if (returnUser == null)
                 {
                     // Logging that something went wrong when trying to save the new user in the other service
                     Log.Warning($"An attempt to create an account with the following values failed: {JsonConvert.SerializeObject(newUser)}");
-
                     return null;
                 }
 
@@ -65,12 +59,13 @@ namespace TSB100UserProfileService
                 userId = returnUser.ID;
             }
 
+            // Step 3: Save NewUser to database
             using (db)
             {
                 var userDb = new UserDb();
                 db.UserDb.Add(userDb);
 
-                _mapper.MapNewUserToModel(newUserFromWeb, userDb);
+                _mapper.MapNewUserToUserDb(newUserFromWeb, userDb);
                 userDb.UserId = userId;
 
                 if (!UpdateDatabase())
@@ -80,8 +75,8 @@ namespace TSB100UserProfileService
                     return null;
                 }
 
-                // Return a User object so that one may add more profile data
-                var user = _mapper.MapToWebService(userDb);
+                // Return a User object so that one may add profile data
+                var user = _mapper.MapUserDbToUser(userDb);
                 return user;
             }
         }
@@ -89,31 +84,74 @@ namespace TSB100UserProfileService
         public bool UpdateUser(User user)
         {
             Log.Information($"In USerProfileService.UpdateUser(): Request recieved with User {JsonConvert.SerializeObject(user)}");
-            // Login Service does not have an UpdateUser() function - cannot pass parameters (password, email, username, first and lastname) to that service, so that they are updated there
-
+            // Step 1: Validate input data
             if (!_validator.ValidateUser(user))
             {
                 return false;
             }
 
-            using (db)
-            {
-                var dbUser = (from u in db.UserDb
-                              where u.UserId == user.Id
-                              select u).FirstOrDefault();
 
-                if (dbUser == null)
+            // Step 2: Update user in LoginService
+            using (var loginService = new LoginServiceRef.LoginServiceClient())
+            {
+                // If user doesn't exist in LoginService then act accordingly
+                if (!loginService.UserIdExist(user.Id))
                 {
-                    // TODO: Create logging
+                    Log.Warning($"In USerProfileService.UpdateUser(): Call to LoginServiceClient.UserIdExist() failed. UserId {user.Id} not found.");
+                    if (!UserIdExistsInProfile(user.Id))
+                    {
+                        return false;
+                    }
+                    // I a user doess't exist in the loginService, but does exist in our database
+                    // then it should also be deleted from our database;
+                    if (DeleteUserProfile(user.Id))
+                    {
+                        Log.Warning($"In USerProfileService.UpdateUser(): Unexpected UserId {user.Id} found in local database. User is now deleted");
+                    };
                     return false;
                 }
+                // Get current user data from LoginService for rollback
+                ReturnUser oldLoginServiceUser = _mapper.MapInterfaceUserToReturnUser(loginService.GetUserById(user.Id));
 
-                _mapper.MapUserToModel(user, dbUser);
-                db.Entry(dbUser).State = EntityState.Modified;
+                ReturnUser updatedUser = _mapper.MapUserToReturnUser(user);
+                if (!loginService.UpdateAccountInfo(updatedUser))
+                {
+                    Log.Error($"In USerProfileService.UpdateUser(): Call to LoginServiceClient.UpdateAccountInfo failed. Unable to update user profile.");
+                    return false;
+                };
 
-                // Saves the changes that have been made, and returns true if succeeded, and false if not
-                return UpdateDatabase();
+
+
+                // Step3: Update user in local database
+                using (db)
+                {
+                    var userDb = db.UserDb.FirstOrDefault(u => u.UserId == user.Id);
+
+                    // If no user exists in dbContext, then add one, since there is a user in LoginService
+                    if (userDb == null)
+                    {
+                        userDb = new UserDb();
+                        db.UserDb.Add(userDb);
+                    }
+
+                    _mapper.MapUserToUserDb(user, userDb);
+                    db.Entry(userDb).State = EntityState.Modified;
+
+                    // Save the changes that have been made, and return true if all is well, and false if not
+                    if (!UpdateDatabase())
+                    {
+                        // rollback change to user in LogInService
+                        if (!loginService.UpdateAccountInfo(oldLoginServiceUser))
+                        {
+                            Log.Error($"In USerProfileService.UpdateUser(): Call to LoginServiceClient.UpdateAccountInfo failed. Unable to rollback user profile.");
+                            return false;
+                        };
+                        return false;
+                    };
+                }
             }
+            // All is well. Report successful update
+            return true;
         }
 
         //----------------------------------------------------------------------------------------
@@ -128,21 +166,20 @@ namespace TSB100UserProfileService
             using (db)
             {
                 // Linq expression using expression:
-                //var dbUser = (from u in db.UserDb
+                //var userDb = (from u in db.UserDb
                 //              where u.UserId == userId
                 //              select u).FirstOrDefault();
 
                 // Linq expression using fluent code:
-                var dbUser = db.UserDb
-                    .Where(u => u.UserId == userId)
-                    .FirstOrDefault();
+                var userDb = db.UserDb.FirstOrDefault(u => u.UserId == userId);
 
-                if (dbUser == null)
+
+                if (userDb == null)
                 {
                     Log.Warning($"In USerProfileService.DeleteUserProfile(): Unable to delete userProfile with userId {userId}. UserId not found in database");
                     return false;
                 }
-                db.Entry(dbUser).State = EntityState.Deleted;
+                db.Entry(userDb).State = EntityState.Deleted;
 
                 // Saves the changes that have been made, and returns true if succeeded, and false if not
                 var profileDeleted = UpdateDatabase();
@@ -193,10 +230,10 @@ namespace TSB100UserProfileService
             Log.Information($"In USerProfileService.UserIdExistsInProfile(): Request recieved with userId {userId}");
             using (db)
             {
-                var dbUser = (from u in db.UserDb
+                var userDb = (from u in db.UserDb
                               where u.UserId == userId
                               select u).FirstOrDefault();
-                return (dbUser != null);
+                return (userDb != null);
             }
         }
 
@@ -205,10 +242,10 @@ namespace TSB100UserProfileService
             Log.Information($"In USerProfileService.EmailExistsInProfile(): Request recieved with email {email}");
             using (db)
             {
-                var dbUser = (from u in db.UserDb
+                var userDb = (from u in db.UserDb
                               where u.Email == email
                               select u).FirstOrDefault();
-                return (dbUser != null);
+                return (userDb != null);
             }
         }
 
@@ -217,10 +254,10 @@ namespace TSB100UserProfileService
             Log.Information($"In USerProfileService.EmailExistsInProfile(): Request recieved with userName {userName}");
             using (db)
             {
-                var dbUser = (from u in db.UserDb
-                              where u.Username == userName
+                var userDb = (from u in db.UserDb
+                              where u.Username.ToLower() == userName.ToLower()
                               select u).FirstOrDefault();
-                return (dbUser != null);
+                return (userDb != null);
             }
         }
 
@@ -230,11 +267,11 @@ namespace TSB100UserProfileService
             using (db)
             {
                 var users = new List<User>();
-                var dbUsers = db.UserDb.ToList();
+                var userDbs = db.UserDb.ToList();
 
-                foreach (var dbUser in dbUsers)
+                foreach (var userDb in userDbs)
                 {
-                    var user = _mapper.MapToWebService(dbUser);
+                    var user = _mapper.MapUserDbToUser(userDb);
 
                     if (user == null)
                     {
@@ -250,22 +287,23 @@ namespace TSB100UserProfileService
         public User GetUserByUserNameOrEmail(string userName)
         {
             Log.Information($"In USerProfileService.GetUserByUserName(): Request recieved with userName {userName}");
+
             using (db)
             {
-                var dbUser = (from u in db.UserDb
-                              where u.Username == userName
+                var userDb = (from u in db.UserDb
+                              where u.Username.ToLower() == userName.ToLower()
                               select u).FirstOrDefault();
-                if (dbUser == null)
+                if (userDb == null)
                 {
-                    dbUser = (from u in db.UserDb
+                    userDb = (from u in db.UserDb
                               where u.Email == userName
                               select u).FirstOrDefault();
-                    if (dbUser == null)
+                    if (userDb == null)
                     {
                         Log.Warning($"In USerProfileService.GetUserByUserName(): No user found with userName or email {userName}");
                     }
                 }
-                return _mapper.MapToWebService(dbUser);
+                return _mapper.MapUserDbToUser(userDb);
             }
         }
 
@@ -274,20 +312,20 @@ namespace TSB100UserProfileService
             Log.Information($"In USerProfileService.GetUserByUserId(): Request recieved with userId {userId}");
             using (db)
             {
-                var dbUser = (from u in db.UserDb
+                var userDb = (from u in db.UserDb
                               where u.UserId == userId
                               select u).FirstOrDefault();
-                if (dbUser == null)
+                if (userDb == null)
                 {
                     Log.Warning($"In USerProfileService.GetUserByUserId(): No user found with userId {userId}");
                 }
 
-                return _mapper.MapToWebService(dbUser);
+                return _mapper.MapUserDbToUser(userDb);
             }
         }
 
         //----------------------------------------------------------------------------------------
-        // Log functions
+        // Log handling functions
         //----------------------------------------------------------------------------------------
         public string GetLatestLog()
         {
@@ -341,7 +379,7 @@ namespace TSB100UserProfileService
                 || ex is InvalidOperationException
                 )
             {
-                // An database exception deserves a higher error level than warning. Let's do error level: Error
+                // A database exception deserves a higher error level than warning. Let's do error level: Error
                 Log.Error($"In USerProfileService.UpdateDatabase(): Unable to apply changes in database. Exception of type {ex.GetType().Name} was thrown. Exception: {JsonConvert.SerializeObject(ex)}");
                 return false;
             }
