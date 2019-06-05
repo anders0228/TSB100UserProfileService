@@ -45,6 +45,7 @@ namespace TSB100UserProfileService
             // Step 2: Save NewUser to LoginService
             using (var loginService = new LoginServiceRef.LoginServiceClient())
             {
+
                 LoginServiceRef.NewUser newUser = _mapper.MapDTONewUserToLoginServiceNewUser(newUserFromWeb);
                 var returnUser = loginService.CreateUser(newUser);
 
@@ -102,8 +103,8 @@ namespace TSB100UserProfileService
                     {
                         return false;
                     }
-                    // I a user doess't exist in the loginService, but does exist in our database
-                    // then it should also be deleted from our database;
+                    // If a user doesn't exist in the loginService, but a profile exists in our database
+                    // then the profile should be deleted from our database;
                     if (DeleteUserProfile(user.Id))
                     {
                         Log.Warning($"In USerProfileService.UpdateUser(): Unexpected UserId {user.Id} found in local database. User is now deleted");
@@ -113,9 +114,25 @@ namespace TSB100UserProfileService
                 // Get current user data from LoginService for rollback
                 ReturnUser oldLoginServiceUser = _mapper.MapInterfaceUserToReturnUser(loginService.GetUserById(user.Id));
 
+                // Update User data in LoginService
+                // Note: There is a bug in LoginServiceRef.UpdateAccountInfo() that returns false if username isn't changed
+                // this prevents us from updating the user information stored there unless we also change the username.
+                // To get around this bug we run UpdateAccountInfo() twice, once with a temporary made-up name
+                // And then again with the desired data :-)
+                var correctUsername = user.Name;
+                user.Username = correctUsername + DateTime.Now.Ticks.ToString(); // make temporary user name
                 ReturnUser updatedUser = _mapper.MapUserToReturnUser(user);
                 if (!loginService.UpdateAccountInfo(updatedUser))
                 {
+                    // Something other than the known bug happened, so we'd better log that
+                    Log.Error($"In USerProfileService.UpdateUser(): Call to LoginServiceClient.UpdateAccountInfo failed. Unable to update user profile.");
+                    return false;
+                };
+                user.Username = correctUsername; // restore username
+                updatedUser = _mapper.MapUserToReturnUser(user);
+                if (!loginService.UpdateAccountInfo(updatedUser))
+                {
+                    // Something other than the known bug happened, so we'd better log that
                     Log.Error($"In USerProfileService.UpdateUser(): Call to LoginServiceClient.UpdateAccountInfo failed. Unable to update user profile.");
                     return false;
                 };
@@ -127,22 +144,38 @@ namespace TSB100UserProfileService
                 {
                     var userDb = db.UserDb.FirstOrDefault(u => u.UserId == user.Id);
 
-                    // If no user exists in dbContext, then add one, since there is a user in LoginService
+                    // If no user exists in dbContext, then add one, 
+                    // since there is a user in LoginService there should also be one in the UserProfileService
                     if (userDb == null)
                     {
                         userDb = new UserDb();
                         db.UserDb.Add(userDb);
+                        db.Entry(userDb).State = EntityState.Added;
                     }
 
                     _mapper.MapUserToUserDb(user, userDb);
-                    db.Entry(userDb).State = EntityState.Modified;
 
                     // Save the changes that have been made, and return true if all is well, and false if not
                     if (!UpdateDatabase())
                     {
                         // rollback change to user in LogInService
+
+                        // Note: There is a bug in LoginServiceRef.UpdateAccountInfo() that returns false if username isn't changed
+                        // this prevents us from updating the user information stored there unless we also change the username.
+                        // To get around this bug we run UpdateAccountInfo() twice, once with a temporary made-up name
+                        // And then again with the desired data :-)
+                        user.Username = correctUsername + DateTime.Now.Ticks.ToString(); // make temporary user name
+                        if (!loginService.UpdateAccountInfo(updatedUser))
+                        {
+                            // Something other than the known bug happened, so we'd better log that
+                            Log.Error($"In USerProfileService.UpdateUser(): Call to LoginServiceClient.UpdateAccountInfo failed. Unable to update user profile.");
+                            return false;
+                        };
+                        user.Username = correctUsername; // restore username
+                        updatedUser = _mapper.MapUserToReturnUser(user);
                         if (!loginService.UpdateAccountInfo(oldLoginServiceUser))
                         {
+                            // Something other than the known bug happened, so we'd better log that
                             Log.Error($"In USerProfileService.UpdateUser(): Call to LoginServiceClient.UpdateAccountInfo failed. Unable to rollback user profile.");
                             return false;
                         };
@@ -163,6 +196,7 @@ namespace TSB100UserProfileService
         public bool DeleteUserProfile(int userId)
         {
             Log.Information($"In USerProfileService.DeleteUserProfile(): Request recieved with userId {userId}");
+
             using (db)
             {
                 // Linq expression using expression:
@@ -199,13 +233,13 @@ namespace TSB100UserProfileService
         {
             Log.Information($"In USerProfileService.DeleteUser(): Request recieved with userId {userId}");
 
-            // Delete user from loginService
+            // Step 1: Delete user from loginService
             var loginDeleted = false;
             using (var loginService = new LoginServiceRef.LoginServiceClient())
             {
                 if (!loginService.UserIdExist(userId))
                 {
-                    Log.Warning($"In USerProfileService.DeleteUser(): Unable to delete user with userId {userId}. UserId not found in loginService");
+                    Log.Warning($"In USerProfileService.DeleteUser(): UserId {userId} not found in loginService");
                 }
                 else
                 {
@@ -216,7 +250,7 @@ namespace TSB100UserProfileService
                     }
                 }
             }
-            // Delete userProfile from database
+            // Step 2: Delete userProfile from database
             var profileDeleted = DeleteUserProfile(userId);
 
             return loginDeleted && profileDeleted;
